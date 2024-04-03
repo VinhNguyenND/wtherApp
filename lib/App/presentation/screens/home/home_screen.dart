@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:my_weather/App/presentation/screens/home/localWeather/blocWeather/localEvent.dart';
 
 import 'package:my_weather/Data/Resource/Dto/Request/weather_request.dart';
 import 'package:my_weather/di.dart';
@@ -58,7 +59,8 @@ class _WeatherHomeBodyState extends State<WeatherHomeBody> {
   void initState() {
     // super.initState();
     final LocalBloc localBloc = BlocProvider.of<LocalBloc>(context);
-    // getLocation().then((value) =>localBloc.getLocalWeather((WeatherRequest(lat: value.latitude.toString(), lon: value.longitude.toString()))) );
+    getLocation().then((value) =>localBloc.add(LocalEvent(request: WeatherRequest(lat: value.latitude.toString(), lon: value.longitude.toString()))) );
+
   }
 
   @override
@@ -203,11 +205,13 @@ class _WeatherMapState extends State<WeatherMap> {
   @override
   void initState() {
     localBloc=  BlocProvider.of<LocalBloc>(context);
+
     super.initState();
   }
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
+
   }
 
   @override
@@ -254,7 +258,7 @@ class _WeatherMapState extends State<WeatherMap> {
       zoom: 19,
       bearing: 50,
     )));
-    localBloc.getLocalWeather(WeatherRequest(lat: latitude.toString(), lon: longitude.toString()));
+     localBloc.add(LocalEvent(request: WeatherRequest(lat:latitude.toString(), lon: longitude.toString())));
     setState(() {
       _getPostion = Marker(
         markerId: MarkerId(latitude.hashCode.toString()),
